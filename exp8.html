@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="beautyApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Petal & Glow | Beauty Blog</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #fff7f5;
+            color: #503941;
+        }
+
+        header {
+            background: linear-gradient(120deg, #f3cbd7, #ffe9df);
+            text-align: center;
+            padding: 35px 15px;
+        }
+
+        header h1 {
+            color: #a63f66;
+            font-size: 38px;
+            margin: 5px;
+        }
+
+        header p {
+            color: #75535d;
+        }
+
+        nav {
+            background: #a63f66;
+            text-align: center;
+            padding: 14px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1050px;
+            margin: 30px auto;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .intro h2 {
+            color: #a63f66;
+            font-size: 29px;
+        }
+
+        .search {
+            display: block;
+            width: 100%;
+            max-width: 450px;
+            padding: 12px;
+            margin: 20px auto;
+            border: 1px solid #e6b9c8;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .blog-container {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px #00000010;
+            transition: 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .blog-image {
+            height: 150px;
+            background: #f4dce4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 55px;
+        }
+
+        .blog-content {
+            padding: 20px;
+        }
+
+        .category {
+            color: #a63f66;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .blog-content h3 {
+            margin: 12px 0;
+        }
+
+        .blog-content p {
+            color: #78676b;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        button {
+            background: #a63f66;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background: #80304e;
+        }
+
+        .comment-box {
+            background: white;
+            padding: 25px;
+            margin-top: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #00000010;
+        }
+
+        textarea {
+            width: 100%;
+            height: 90px;
+            padding: 12px;
+            border: 1px solid #e6b9c8;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+
+        .comment {
+            background: #fff0f4;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .success {
+            color: #398052;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #593944;
+            color: white;
+            text-align: center;
+            padding: 22px;
+            margin-top: 40px;
+        }
+
+        @media(max-width: 500px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body ng-controller="BeautyController">
+
+    <header>
+        <h1>♡ Petal & Glow</h1>
+        <p>Your little corner of beauty and self-care</p>
+    </header>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#blogs">Beauty Blogs</a>
+        <a href="#comments">Comments</a>
+    </nav>
+
+    <div class="container" id="home">
+
+        <div class="intro">
+            <h2>Discover Your Natural Glow 🌸</h2>
+            <p>
+                Explore skincare routines, beauty secrets
+                and simple self-care tips.
+            </p>
+        </div>
+
+        <section id="blogs">
+            <h2>Our Beauty Journal</h2>
+
+            <input class="search"
+                   type="text"
+                   ng-model="searchText"
+                   placeholder="Search beauty blogs...">
+
+            <div class="blog-container">
+
+                <div class="blog-card"
+                     ng-repeat="blog in blogs | filter:searchText">
+
+                    <div class="blog-image">
+                        {{blog.icon}}
+                    </div>
+
+                    <div class="blog-content">
+
+                        <span class="category">
+                            {{blog.category}}
+                        </span>
+
+                        <h3>{{blog.title}}</h3>
+
+                        <p>{{blog.description}}</p>
+
+                        <button ng-click="toggleBlog(blog)">
+                            {{blog.expanded ? 'Show Less' : 'Read More'}}
+                        </button>
+
+                        <p ng-show="blog.expanded">
+                            {{blog.details}}
+                        </p>
+
+                        <button ng-click="toggleFavorite(blog)">
+                            {{blog.favorite ? '♥ Favourited' : '♡ Favourite'}}
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <p ng-if="(blogs | filter:searchText).length == 0">
+                No blogs found. Try another search.
+            </p>
+        </section>
+
+        <section class="comment-box" id="comments">
+
+            <h2>Share Your Thoughts 💌</h2>
+
+            <p>Enjoyed a blog? Leave a comment below!</p>
+
+            <form ng-submit="addComment()">
+
+                <textarea ng-model="newComment"
+                          placeholder="Write your comment here..."
+                          required></textarea>
+
+                <br>
+
+                <button type="submit">Post Comment</button>
+
+            </form>
+
+            <p class="success" ng-show="successMessage">
+                {{successMessage}}
+            </p>
+
+            <h3>Community Comments ({{comments.length}})</h3>
+
+            <div class="comment"
+                 ng-repeat="comment in comments track by $index">
+
+                <p>{{comment}}</p>
+
+                <button ng-click="removeComment($index)">
+                    Delete
+                </button>
+
+            </div>
+
+            <p ng-if="comments.length == 0">
+                Be the first to share your thoughts!
+            </p>
+
+        </section>
+
+    </div>
+
+    <footer>
+        <h3>Petal & Glow ♡</h3>
+        <p>Beauty begins with self-care.</p>
+        <p>Beauty and Skincare Blogs</p>
+    </footer>
+
+    <script>
+        // Create AngularJS application
+        var app = angular.module("beautyApp", []);
+
+        // Define controller
+        app.controller("BeautyController", function($scope) {
+
+            // Array of blog objects
+            $scope.blogs = [
+                {
+                    title: "Daily Skincare Routine",
+                    category: "Skincare",
+                    icon: "🧴",
+                    description:
+                        "Discover the basics of a daily skincare routine.",
+                    details:
+                        "Cleanse gently, moisturize regularly and use sunscreen during the day.",
+                    expanded: false,
+                    favorite: false
+                },
+                {
+                    title: "Natural Beauty Tips",
+                    category: "Beauty",
+                    icon: "🌷",
+                    description:
+                        "Explore simple habits for your beauty routine.",
+                    details:
+                        "Choose suitable products, remove makeup before bed and avoid harsh scrubbing.",
+                    expanded: false,
+                    favorite: false
+                },
+                {
+                    title: "Understanding Skin Types",
+                    category: "Skincare",
+                    icon: "✨",
+                    description:
+                        "Learn about oily, dry and combination skin.",
+                    details:
+                        "Observe how your skin feels and choose gentle products suited to its needs.",
+                    expanded: false,
+                    favorite: false
+                },
+                {
+                    title: "Self-Care and Wellness",
+                    category: "Self-Care",
+                    icon: "🌸",
+                    description:
+                        "Make time for simple self-care habits.",
+                    details:
+                        "Maintain a consistent routine, get enough rest and take time to relax.",
+                    expanded: false,
+                    favorite: false
+                }
+            ];
+
+            // Array to store comments
+            $scope.comments = [];
+
+            $scope.newComment = "";
+            $scope.successMessage = "";
+
+            // Show or hide blog details
+            $scope.toggleBlog = function(blog) {
+                blog.expanded = !blog.expanded;
+            };
+
+            // Add or remove favourite
+            $scope.toggleFavorite = function(blog) {
+                blog.favorite = !blog.favorite;
+            };
+
+            // Add a comment
+            $scope.addComment = function() {
+                var comment = $scope.newComment.trim();
+
+                if (comment !== "") {
+                    $scope.comments.push(comment);
+                    $scope.newComment = "";
+                    $scope.successMessage =
+                        "Your comment was posted successfully!";
+                }
+            };
+
+            // Delete a comment
+            $scope.removeComment = function(index) {
+                $scope.comments.splice(index, 1);
+                $scope.successMessage = "";
+            };
+
+        });
+    </script>
+
+</body>
+</html>
